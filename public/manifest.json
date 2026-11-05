@@ -1,0 +1,16 @@
+{
+  "name": "NAIJA SMART QUIZ",
+  "short_name": "NaijaQuiz",
+  "description": "Interactive Junior & Senior Secondary School Learning Platform for Nigeria",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#047857",
+  "theme_color": "#047857",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
