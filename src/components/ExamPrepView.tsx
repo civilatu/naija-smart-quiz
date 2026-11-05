@@ -44,10 +44,21 @@ export const ExamPrepView: React.FC<Props> = ({ onStartExamQuiz }) => {
         },
       ];
 
+  const [examStreamFilter, setExamStreamFilter] = useState<'my-stream' | 'all' | 'Science' | 'Arts' | 'Commercial'>(
+    'my-stream'
+  );
+
   // Get subjects corresponding to current class & stream
   const availableSubjects = ALL_SUBJECTS.filter((sub) => {
     if (!isSenior) return sub.division === 'JSS';
-    return sub.division === 'SSS' && (sub.stream === 'General' || sub.stream === profile.stream);
+    if (sub.division !== 'SSS') return false;
+    if (examStreamFilter === 'my-stream') {
+      return sub.stream === 'General' || sub.stream === profile.stream;
+    }
+    if (examStreamFilter === 'Science') return sub.stream === 'Science';
+    if (examStreamFilter === 'Arts') return sub.stream === 'Arts';
+    if (examStreamFilter === 'Commercial') return sub.stream === 'Commercial';
+    return true; // 'all'
   });
 
   return (
@@ -101,12 +112,64 @@ export const ExamPrepView: React.FC<Props> = ({ onStartExamQuiz }) => {
 
       {/* Available Exam Subject Papers */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-black text-slate-900">
-            {selectedExam} Subject Papers for {profile.classLevel}{' '}
-            {isSenior ? `(${profile.stream})` : ''}
-          </h2>
-          <span className="text-xs text-slate-500 font-semibold">20 Questions • 20s / question</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-xl font-black text-slate-900">
+              {selectedExam} Subject Papers for {profile.classLevel}{' '}
+              {isSenior ? `(${profile.stream})` : ''}
+            </h2>
+            <span className="text-xs text-slate-500 font-semibold">20 Questions • 20s / question</span>
+          </div>
+
+          {/* SSS Exam Stream Filter */}
+          {isSenior && (
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-slate-200/80 text-xs font-bold text-slate-700">
+              <button
+                onClick={() => setExamStreamFilter('my-stream')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  examStreamFilter === 'my-stream'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : 'hover:text-slate-900'
+                }`}
+              >
+                ★ My Department ({profile.stream})
+              </button>
+              <button
+                onClick={() => setExamStreamFilter('all')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  examStreamFilter === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                All SSS
+              </button>
+              <button
+                onClick={() => setExamStreamFilter('Science')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  examStreamFilter === 'Science' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                🔬 Science
+              </button>
+              <button
+                onClick={() => setExamStreamFilter('Arts')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  examStreamFilter === 'Arts' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                🎭 Arts
+              </button>
+              <button
+                onClick={() => setExamStreamFilter('Commercial')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  examStreamFilter === 'Commercial'
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'hover:text-slate-900'
+                }`}
+              >
+                💼 Commercial
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

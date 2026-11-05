@@ -66,9 +66,8 @@ export const DashboardView: React.FC<Props> = ({
   onSelectNav,
 }) => {
   const { profile } = useQuizContext();
-  const [activeFilter, setActiveFilter] = useState<'all' | 'stream' | 'core'>('all');
-
   const isSenior = profile.classLevel.startsWith('SS');
+  const [activeFilter, setActiveFilter] = useState<'my-stream' | 'all' | 'Science' | 'Arts' | 'Commercial' | 'core'>('my-stream');
 
   // Filter subjects based on class & stream
   const relevantSubjects = ALL_SUBJECTS.filter((sub) => {
@@ -76,11 +75,15 @@ export const DashboardView: React.FC<Props> = ({
       // JSS only sees JSS subjects
       return sub.division === 'JSS';
     } else {
-      // SSS sees General core subjects + their chosen stream
       if (sub.division !== 'SSS') return false;
+      if (activeFilter === 'my-stream') {
+        return sub.stream === 'General' || sub.stream === profile.stream;
+      }
       if (activeFilter === 'core') return sub.stream === 'General';
-      if (activeFilter === 'stream') return sub.stream === profile.stream;
-      return sub.stream === 'General' || sub.stream === profile.stream;
+      if (activeFilter === 'Science') return sub.stream === 'Science';
+      if (activeFilter === 'Arts') return sub.stream === 'Arts';
+      if (activeFilter === 'Commercial') return sub.stream === 'Commercial';
+      return true; // 'all' displays every Senior subject
     }
   });
 
@@ -177,24 +180,48 @@ export const DashboardView: React.FC<Props> = ({
             </p>
           </div>
 
-          {/* SSS Filter Tabs */}
+          {/* SSS Stream Selector Tabs */}
           {isSenior && (
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/70 text-xs font-bold text-slate-600">
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl bg-slate-200/80 text-xs font-bold text-slate-700">
+              <button
+                onClick={() => setActiveFilter('my-stream')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  activeFilter === 'my-stream' ? 'bg-emerald-600 text-white shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                ★ My Department ({profile.stream})
+              </button>
               <button
                 onClick={() => setActiveFilter('all')}
                 className={`px-3 py-1.5 rounded-xl transition ${
                   activeFilter === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
                 }`}
               >
-                All Subjects
+                All SSS
               </button>
               <button
-                onClick={() => setActiveFilter('stream')}
+                onClick={() => setActiveFilter('Science')}
                 className={`px-3 py-1.5 rounded-xl transition ${
-                  activeFilter === 'stream' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                  activeFilter === 'Science' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
                 }`}
               >
-                {profile.stream}
+                🔬 Science
+              </button>
+              <button
+                onClick={() => setActiveFilter('Arts')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  activeFilter === 'Arts' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                🎭 Arts & Humanities
+              </button>
+              <button
+                onClick={() => setActiveFilter('Commercial')}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  activeFilter === 'Commercial' ? 'bg-white text-slate-900 shadow-sm' : 'hover:text-slate-900'
+                }`}
+              >
+                💼 Commercial
               </button>
               <button
                 onClick={() => setActiveFilter('core')}
